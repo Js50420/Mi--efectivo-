@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Efectivo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Control financiero personal</p>
+          <h1>Mi Efectivo</h1>
+        </div>
+        <button id="resetButton" class="secondary-button" type="button">Reiniciar</button>
+      </header>
+
+      <main class="dashboard">
+        <section class="summary-grid" aria-label="Resumen financiero">
+          <article class="summary-card balance">
+            <span class="label">Saldo</span>
+            <strong id="balance">$0.00</strong>
+          </article>
+          <article class="summary-card income">
+            <span class="label">Ingresos</span>
+            <strong id="incomeTotal">$0.00</strong>
+          </article>
+          <article class="summary-card expense">
+            <span class="label">Gastos</span>
+            <strong id="expenseTotal">$0.00</strong>
+          </article>
+          <article class="summary-card savings">
+            <span class="label">Ahorro</span>
+            <strong id="savingsTotal">$0.00</strong>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <div class="panel">
+            <h2>Registrar movimiento</h2>
+            <form id="transactionForm" class="transaction-form">
+              <label>
+                Descripción
+                <input id="description" name="description" type="text" placeholder="Ej. Sueldo, compra de alimentos" maxlength="60" required />
+              </label>
+
+              <label>
+                Monto
+                <input id="amount" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required />
+              </label>
+
+              <label>
+                Tipo
+                <select id="type" name="type">
+                  <option value="income">Ingreso</option>
+                  <option value="expense">Gasto</option>
+                </select>
+              </label>
+
+              <button class="primary-button" type="submit">Guardar movimiento</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Historial</h2>
+            </div>
+            <ul id="transactionList" class="transaction-list" aria-live="polite"></ul>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
