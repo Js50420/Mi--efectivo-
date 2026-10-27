@@ -1,77 +1,81 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mi Efectivo</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">Control financiero personal</p>
-          <h1>Mi Efectivo</h1>
-        </div>
-        <button id="resetButton" class="secondary-button" type="button">Reiniciar</button>
-      </header>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b5f49"><title>Mi Efectivo</title>
+<style>
+:root{--green:#0b5f49;--mint:#e4f5ee;--bg:#f4f7f5;--ink:#17231e;--muted:#69766f;--red:#b93838;--line:#e0e8e3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:12px 14px;font-weight:650}.primary{background:var(--green);color:white}.soft{background:var(--mint);color:var(--green)}.danger{background:#fdeaea;color:var(--red)}.wrap{max-width:720px;margin:auto;padding:16px 16px 100px}.top{background:var(--green);color:white;padding:24px 20px 28px;border-radius:0 0 24px 24px;margin:-16px -16px 18px}.topline{display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;font-size:20px}.balance-label{opacity:.82;font-size:13px;margin-top:24px}.balance{font-size:32px;font-weight:800;margin:5px 0 16px}.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sum{background:#ffffff1b;border:1px solid #ffffff22;border-radius:14px;padding:12px}.sum small{display:block;opacity:.8}.sum strong{display:block;margin-top:5px;font-size:17px}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:18px 0}.tab{background:white;color:var(--muted);padding:10px 4px;font-size:12px;border:1px solid var(--line)}.tab.active{background:var(--mint);color:var(--green);border-color:#a7d7c3}.panel{display:none}.panel.active{display:block}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}.card h2{font-size:18px;margin:0 0 14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin-bottom:12px}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}.field input,.field select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:white;color:var(--ink)}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.muted{color:var(--muted);font-size:13px}.money{font-weight:750}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border-bottom:0}.pill{font-size:11px;padding:5px 8px;border-radius:99px;background:var(--mint);color:var(--green)}.pill.red{background:#fdeaea;color:var(--red)}.bar{height:8px;border-radius:99px;background:#e8efeb;overflow:hidden;margin:9px 0}.bar span{display:block;height:100%;background:var(--green);border-radius:99px}.empty{padding:18px 0;color:var(--muted);text-align:center}.foot{text-align:center;color:var(--muted);font-size:11px;margin:20px 0}.overlay{position:fixed;inset:0;background:var(--bg);z-index:10;display:flex;align-items:center;justify-content:center;padding:24px}.lockbox{width:100%;max-width:360px;background:white;border-radius:22px;padding:24px;border:1px solid var(--line)}.lockbox h1{margin:0 0 8px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#17231e;color:white;padding:12px 18px;border-radius:12px;display:none;z-index:20;max-width:90%;font-size:14px}.smallbtn{padding:7px 9px;font-size:12px}.hidden{display:none!important}
+@media(min-width:600px){.top{margin-top:0;border-radius:24px}.wrap{padding-top:20px}}
+</style>
+</head>
+<body>
+<div id="lock" class="overlay"><div class="lockbox"><div style="font-size:30px">🔐</div><h1>Mi Efectivo</h1><p class="muted" id="lockText">Crea un PIN de 4 a 8 dígitos para proteger tus datos en este dispositivo.</p><div class="field"><label for="pin">PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="4 a 8 dígitos"></div><div class="field" id="confirmWrap"><label for="pin2">Confirma el PIN</label><input id="pin2" type="password" inputmode="numeric" maxlength="8" placeholder="Repite tu PIN"></div><button class="primary" style="width:100%" id="unlockBtn">Guardar PIN y entrar</button><p class="muted" style="margin-bottom:0">Tus datos quedan en este navegador. El PIN solo bloquea la pantalla; no cifra los datos. Haz copias de seguridad y no uses información bancaria sensible.</p></div></div>
+<div class="wrap" id="app">
+<header class="top"><div class="topline"><div class="brand">💰 Mi Efectivo</div><button id="lockNow" class="soft smallbtn">🔒 Bloquear</button></div><div class="balance-label">EFECTIVO DISPONIBLE</div><div class="balance" id="balance">RD$ 0.00</div><div class="summary"><div class="sum"><small>Ingresos del mes</small><strong id="incomeMonth">RD$ 0.00</strong></div><div class="sum"><small>Gastos del mes</small><strong id="expenseMonth">RD$ 0.00</strong></div></div></header>
+<nav class="tabs"><button class="tab active" data-tab="inicio">Inicio</button><button class="tab" data-tab="movimientos">Movimientos</button><button class="tab" data-tab="deudas">Deudas</button><button class="tab" data-tab="ahorro">Ahorro</button></nav>
+<section class="panel active" id="inicio">
+<div class="card"><h2>Registrar movimiento</h2><form id="moveForm"><div class="grid2"><div class="field"><label>Tipo</label><select id="type"><option value="income">Ingreso</option><option value="expense">Gasto</option></select></div><div class="field"><label>Fecha</label><input id="date" type="date" required></div></div><div class="field"><label>Descripción</label><input id="desc" maxlength="70" placeholder="Ej. Sueldo quincenal" required></div><div class="grid2"><div class="field"><label>Monto (RD$)</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div><div class="field"><label>Categoría</label><select id="category"><option>Sueldo</option><option>Propinas</option><option>Negocio</option><option>Comida</option><option>Transporte</option><option>Servicios</option><option>Compras</option><option>Salud</option><option>Deuda</option><option>Otro</option></select></div></div><button class="primary" style="width:100%">+ Guardar movimiento</button></form></div>
+<div class="card"><div class="row"><h2>Resumen de hoy</h2><span class="pill">RD$</span></div><p class="muted">Registra tus ingresos y gastos para que el balance se actualice automáticamente.</p><div class="grid2"><div><div class="muted">Balance total</div><div class="money" id="balance2">RD$ 0.00</div></div><div><div class="muted">Movimientos</div><div class="money" id="count">0</div></div><div><div class="muted">Deuda pendiente</div><div class="money" id="debtTotal">RD$ 0.00</div></div><div><div class="muted">Ahorro acumulado</div><div class="money" id="savedTotal">RD$ 0.00</div></div></div></div>
+</section>
+<section class="panel" id="movimientos"><div class="card"><div class="row" style="flex-wrap:wrap"><h2>Historial</h2><div style="display:flex;gap:6px;flex-wrap:wrap"><button id="export" class="soft smallbtn">Exportar CSV</button><button id="backup" class="soft smallbtn">Copia JSON</button><button id="importBtn" class="soft smallbtn">Importar copia</button><input id="importFile" type="file" accept=".json,application/json" class="hidden"></div></div><p class="muted">Guarda una copia de tus movimientos, deudas y metas para poder recuperarlos en otro momento.</p><div id="history"></div></div></section>
+<section class="panel" id="deudas">
+<div class="card"><h2>Agregar deuda</h2><form id="debtForm"><div class="field"><label>Nombre de la deuda</label><input id="debtName" maxlength="60" placeholder="Ej. Préstamo personal" required></div><div class="grid2"><div class="field"><label>Saldo pendiente (RD$)</label><input id="debtAmount" type="number" min="0.01" step=".01" required></div><div class="field"><label>Cuota quincenal (RD$)</label><input id="debtPay" type="number" min="0" step=".01" placeholder="0.00"></div></div><div class="field"><label>Próxima fecha de pago</label><input id="debtDate" type="date"></div><button class="primary" style="width:100%">Guardar deuda</button></form></div>
+<div class="card"><h2>Mis deudas</h2><div id="debtsList"></div></div>
+</section>
+<section class="panel" id="ahorro">
+<div class="card"><h2>Crear meta de ahorro</h2><form id="goalForm"><div class="field"><label>Nombre de la meta</label><input id="goalName" maxlength="60" placeholder="Ej. Fondo de emergencia" required></div><div class="grid2"><div class="field"><label>Objetivo (RD$)</label><input id="goalTarget" type="number" min="1" step=".01" required></div><div class="field"><label>Ahorro inicial (RD$)</label><input id="goalSaved" type="number" min="0" step=".01" value="0"></div></div><button class="primary" style="width:100%">Crear meta</button></form></div>
+<div class="card"><h2>Mis metas</h2><div id="goalsList"></div></div></section>
+<div class="foot">Tus datos se guardan en este navegador. No introduzcas datos bancarios sensibles.</div>
+</div><div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id), money=n=>new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP'}).format(Number(n)||0), today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+let data={moves:[],debts:[],goals:[]}, pinHash=localStorage.getItem('me_pin')||'', session=false;
+const readData=()=>{try{data=JSON.parse(localStorage.getItem('me_data')||'{"moves":[],"debts":[],"goals":[]}')}catch(e){data={moves:[],debts:[],goals:[]}}};
+const save=()=>{try{localStorage.setItem('me_data',JSON.stringify(data));return true}catch(e){toast('No se pudieron guardar los datos. Revisa los ajustes de Safari y vuelve a intentarlo.');return false}};
+function toast(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2400)}
+function balance(){return data.moves.reduce((a,m)=>a+(m.type==='income'?Number(m.amount):-Number(m.amount)),0)}
+function render(){let now=new Date(), ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');let ms=data.moves.filter(m=>(m.date||'').startsWith(ym));$('balance').textContent=money(balance());$('balance2').textContent=money(balance());$('incomeMonth').textContent=money(ms.filter(m=>m.type==='income').reduce((a,m)=>a+ +m.amount,0));$('expenseMonth').textContent=money(ms.filter(m=>m.type==='expense').reduce((a,m)=>a+ +m.amount,0));$('count').textContent=data.moves.length;$('debtTotal').textContent=money(data.debts.reduce((a,d)=>a+Number(d.amount||0),0));$('savedTotal').textContent=money(data.goals.reduce((a,g)=>a+Number(g.saved||0),0));
+let h=[...data.moves].sort((a,b)=>b.date.localeCompare(a.date));$('history').innerHTML=h.length?h.map(m=>`<div class="item"><div class="row"><div><strong>${esc(m.desc)}</strong><div class="muted">${esc(m.date)} · ${esc(m.category)}</div></div><div style="text-align:right"><div class="money" style="color:${m.type==='income'?'var(--green)':'var(--red)'}">${m.type==='income'?'+':'−'}${money(m.amount)}</div><button class="danger smallbtn" onclick="delMove('${m.id}')">Eliminar</button></div></div></div>`).join(''):'<div class="empty">Aún no hay movimientos.</div>';
+$('debtsList').innerHTML=data.debts.length?data.debts.map(d=>`<div class="item"><div class="row"><div><strong>${esc(d.name)}</strong><div class="muted">Cuota quincenal: ${money(d.pay)}${d.date?' · Próximo pago: '+esc(d.date):''}</div></div><div style="text-align:right"><div class="money">${money(d.amount)}</div><button class="soft smallbtn" onclick="payDebt('${d.id}')">Registrar abono</button> <button class="danger smallbtn" onclick="delDebt('${d.id}')">Eliminar</button></div></div></div>`).join(''):'<div class="empty">No has agregado deudas.</div>';
+$('goalsList').innerHTML=data.goals.length?data.goals.map(g=>{let p=Math.min(100,Math.round(g.saved/g.target*100));return `<div class="item"><div class="row"><strong>${esc(g.name)}</strong><span class="pill">${p}%</span></div><div class="bar"><span style="width:${p}%"></span></div><div class="row"><span class="muted">${money(g.saved)} de ${money(g.target)}</span><div><button class="soft smallbtn" onclick="addGoal('${g.id}')">Añadir</button> <button class="danger smallbtn" onclick="delGoal('${g.id}')">Eliminar</button></div></div></div>`}).join(''):'<div class="empty">Crea tu primera meta de ahorro.</div>'}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function id(){return Math.random().toString(36).slice(2,10)}
+window.delMove=id=>{if(confirm('¿Eliminar este movimiento?')){data.moves=data.moves.filter(m=>m.id!==id);save();render()}}
+window.delDebt=id=>{if(confirm('¿Eliminar esta deuda?')){data.debts=data.debts.filter(d=>d.id!==id);save();render()}}
+window.delGoal=id=>{if(confirm('¿Eliminar esta meta?')){data.goals=data.goals.filter(g=>g.id!==id);save();render()}}
+window.payDebt=debtId=>{let d=data.debts.find(x=>x.id===debtId);let s=prompt('¿Cuánto vas a abonar a '+d.name+'? (RD$)',d.pay||'');if(s===null)return;let n=Number(s);if(!Number.isFinite(n)||n<=0||n>d.amount){toast('Introduce un abono válido, no mayor al saldo.');return}d.amount=Math.max(0,d.amount-n);data.moves.push({id:id(),type:'expense',date:today(),desc:'Abono deuda: '+d.name,amount:n,category:'Deuda'});if(d.amount===0)data.debts=data.debts.filter(x=>x.id!==debtId);save();render();toast('Abono registrado')}
+window.addGoal=goalId=>{let g=data.goals.find(x=>x.id===goalId);let s=prompt('¿Cuánto deseas añadir a "'+g.name+'"? (RD$)','');if(s===null)return;let n=Number(s);if(!Number.isFinite(n)||n<=0){toast('Introduce un monto válido.');return}g.saved+=n;data.moves.push({id:id(),type:'expense',date:today(),desc:'Ahorro: '+g.name,amount:n,category:'Otro'});save();render();toast('Ahorro actualizado')}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))}));
+$('date').value=today();$('moveForm').addEventListener('submit',e=>{e.preventDefault();let amount=Number($('amount').value),desc=$('desc').value.trim(),date=$('date').value;if(!desc){toast('Escribe una descripción.');$('desc').focus();return}if(!date){toast('Selecciona una fecha válida.');$('date').focus();return}if(!Number.isFinite(amount)||amount<=0){toast('Introduce un monto mayor que RD$0.');$('amount').focus();return}data.moves.push({id:id(),type:$('type').value,date,desc,amount,category:$('category').value});if(!save()){data.moves.pop();return}render();e.target.reset();$('date').value=today();toast('Movimiento guardado correctamente')});
+$('debtForm').addEventListener('submit',e=>{e.preventDefault();data.debts.push({id:id(),name:$('debtName').value.trim(),amount:Number($('debtAmount').value),pay:Number($('debtPay').value)||0,date:$('debtDate').value});save();render();e.target.reset();toast('Deuda guardada')});
+$('goalForm').addEventListener('submit',e=>{e.preventDefault();let target=Number($('goalTarget').value),saved=Number($('goalSaved').value)||0;if(target<=0||saved<0)return;data.goals.push({id:id(),name:$('goalName').value.trim(),target,saved});save();render();e.target.reset();$('goalSaved').value='0';toast('Meta guardada')});
+$('export').addEventListener('click',()=>{let rows=[['Fecha','Tipo','Descripción','Categoría','Monto'],...data.moves.map(m=>[m.date,m.type,m.desc,m.category,m.amount])];let csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.download='mis_movimientos.csv';a.click();URL.revokeObjectURL(a.href)});
 
-      <main class="dashboard">
-        <section class="summary-grid" aria-label="Resumen financiero">
-          <article class="summary-card balance">
-            <span class="label">Saldo</span>
-            <strong id="balance">$0.00</strong>
-          </article>
-          <article class="summary-card income">
-            <span class="label">Ingresos</span>
-            <strong id="incomeTotal">$0.00</strong>
-          </article>
-          <article class="summary-card expense">
-            <span class="label">Gastos</span>
-            <strong id="expenseTotal">$0.00</strong>
-          </article>
-          <article class="summary-card savings">
-            <span class="label">Ahorro</span>
-            <strong id="savingsTotal">$0.00</strong>
-          </article>
-        </section>
+$('backup').addEventListener('click',()=>{
+  const payload={app:'Mi Efectivo',version:2,createdAt:new Date().toISOString(),data};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download='mi_efectivo_copia.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Copia de seguridad descargada');
+});
+$('importBtn').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',async e=>{
+  const file=e.target.files&&e.target.files[0];if(!file)return;
+  try{
+    const raw=JSON.parse(await file.text());const incoming=raw.data||raw;
+    if(!incoming||!Array.isArray(incoming.moves)||!Array.isArray(incoming.debts)||!Array.isArray(incoming.goals))throw new Error('Formato');
+    if(!confirm('Importar esta copia reemplazará los datos actuales de Mi Efectivo. ¿Deseas continuar?'))return;
+    data={moves:incoming.moves,debts:incoming.debts,goals:incoming.goals};
+    save();render();toast('Copia restaurada correctamente');
+  }catch(err){toast('No se pudo importar. Selecciona una copia JSON válida de Mi Efectivo.')}
+  finally{e.target.value=''}
+});
 
-        <section class="content-grid">
-          <div class="panel">
-            <h2>Registrar movimiento</h2>
-            <form id="transactionForm" class="transaction-form">
-              <label>
-                Descripción
-                <input id="description" name="description" type="text" placeholder="Ej. Sueldo, compra de alimentos" maxlength="60" required />
-              </label>
-
-              <label>
-                Monto
-                <input id="amount" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required />
-              </label>
-
-              <label>
-                Tipo
-                <select id="type" name="type">
-                  <option value="income">Ingreso</option>
-                  <option value="expense">Gasto</option>
-                </select>
-              </label>
-
-              <button class="primary-button" type="submit">Guardar movimiento</button>
-            </form>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">
-              <h2>Historial</h2>
-            </div>
-            <ul id="transactionList" class="transaction-list" aria-live="polite"></ul>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <script src="app.js"></script>
-  </body>
-</html>
+async function hash(s){let b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+function showLock(){session=false;$('lock').style.display='flex';$('pin').value='';$('pin2').value='';$('confirmWrap').classList.toggle('hidden',!!pinHash);$('lockText').textContent=pinHash?'Introduce tu PIN para entrar.':'Crea un PIN de 4 a 8 dígitos para proteger tus datos en este dispositivo.';$('unlockBtn').textContent=pinHash?'Desbloquear':'Guardar PIN y entrar'}
+$('unlockBtn').addEventListener('click',async()=>{let p=$('pin').value;if(!/^\d{4,8}$/.test(p)){toast('El PIN debe tener entre 4 y 8 dígitos.');return}if(!pinHash){if(p!==$('pin2').value){toast('Los PIN no coinciden.');return}pinHash=await hash(p);localStorage.setItem('me_pin',pinHash)}else if(await hash(p)!==pinHash){toast('PIN incorrecto.');return}$('lock').style.display='none';session=true;readData();render()});
+$('lockNow').addEventListener('click',showLock);
+readData();showLock();
+</script>
+</body></html>
