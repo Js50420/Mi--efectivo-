@@ -1,4 +1,133 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123b65">
+<title>Mi Libertad Financiera</title>
+<style>
+:root{--navy:#123b65;--blue:#1769aa;--teal:#138a72;--red:#c74747;--bg:#f3f6fa;--card:#fff;--text:#182433;--muted:#667589;--line:#e3eaf1}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:linear-gradient(135deg,#123b65,#1976b9);color:white;padding:24px 18px 28px;border-radius:0 0 24px 24px}
+header h1{margin:0 0 6px;font-size:26px}header p{margin:0;opacity:.9;font-size:14px}
+main{max-width:850px;margin:auto;padding:16px 14px 40px}.nav{display:flex;gap:8px;overflow:auto;margin:0 0 16px;padding:2px 0 8px}
+.nav button{white-space:nowrap;border:0;border-radius:20px;padding:10px 14px;background:#e3eaf2;color:#24415d;font-weight:700}
+.nav button.active{background:var(--navy);color:white}
+.page{display:none}.page.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 3px 12px #193b5a08}
+.metric .label{font-size:12px;color:var(--muted);margin-bottom:8px}.metric .value{font-size:21px;font-weight:800;overflow-wrap:anywhere}.green{color:var(--teal)}.red{color:var(--red)}
+h2{font-size:19px;margin:4px 0 14px}h3{font-size:16px;margin:0 0 12px}
+label{display:block;font-size:13px;font-weight:700;color:#45576b;margin:10px 0 5px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cbd7e3;border-radius:10px;background:white;font:inherit;color:var(--text)}
+textarea{min-height:75px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button.primary{border:0;border-radius:11px;background:var(--blue);color:#fff;font-weight:800;padding:13px 16px;width:100%;margin-top:12px;font-size:15px}
+button.danger{border:1px solid #f0caca;background:#fff4f4;color:#a92d2d;border-radius:9px;padding:7px 10px}
+button.small{border:1px solid var(--line);background:#f7f9fc;border-radius:9px;padding:7px 10px;color:#234}
+.item{border-top:1px solid var(--line);padding:12px 0;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.item:first-child{border-top:0}.item strong{display:block}.sub{font-size:12px;color:var(--muted);margin-top:4px}.amount{font-weight:800;white-space:nowrap}.bar{height:10px;border-radius:20px;background:#e5ebf1;overflow:hidden;margin:10px 0}.bar span{display:block;height:100%;background:var(--teal);width:0}
+.tip{background:#eaf7f2;border:1px solid #cceadd;border-radius:15px;padding:16px;line-height:1.5}.tip strong{display:block;color:#116c58;margin-bottom:5px}
+.empty{color:var(--muted);font-size:14px;padding:12px 0}.note{font-size:12px;color:var(--muted);line-height:1.5}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#edf4fb;color:#23547e;font-size:11px;font-weight:800}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:8px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.two .card{height:fit-content}}
+</style>
+</head>
+<body>
+<header><h1>💪 Mi Libertad Financiera</h1><p>Organiza tu dinero, reduce tus deudas y avanza paso a paso.</p></header>
+<main>
+<div class="nav" role="tablist">
+<button class="active" data-page="inicio">Resumen</button><button data-page="movimientos">Ingresos y gastos</button><button data-page="deudas">Mis deudas</button><button data-page="consejos">Motivación</button>
+</div>
+<section id="inicio" class="page active">
+<div class="grid">
+<div class="card metric"><div class="label">Dinero disponible</div><div class="value green" id="balance">RD$ 0.00</div></div>
+<div class="card metric"><div class="label">Deuda pendiente</div><div class="value red" id="totalDebt">RD$ 0.00</div></div>
+<div class="card metric"><div class="label">Ingresos registrados</div><div class="value" id="totalIncome">RD$ 0.00</div></div>
+<div class="card metric"><div class="label">Gastos registrados</div><div class="value" id="totalExpenses">RD$ 0.00</div></div>
+</div>
+<div class="card"><h2>Tu progreso para salir de deudas</h2><div class="sub" id="progressText">Registra tus deudas para comenzar.</div><div class="bar"><span id="progressBar"></span></div><div class="sub" id="paidText"></div></div>
+<div class="tip"><strong>🌱 Consejo de hoy</strong><span id="dailyTip"></span></div>
+<div class="card" style="margin-top:12px"><h3>Últimos movimientos</h3><div id="recentList" class="empty">Todavía no hay movimientos.</div></div>
+</section>
+<section id="movimientos" class="page">
+<div class="two">
+<div class="card"><h2>Registrar ingreso o gasto</h2>
+<form id="transactionForm">
+<label for="type">Tipo de movimiento</label><select id="type"><option value="income">Ingreso</option><option value="expense">Gasto</option></select>
+<label for="description">Descripción</label><input id="description" placeholder="Ej. salario, comida, transporte" required maxlength="90">
+<div class="row"><div><label for="amount">Monto (RD$)</label><input id="amount" type="number" min="0.01" step="0.01" required placeholder="0.00"></div><div><label for="date">Fecha</label><input id="date" type="date" required></div></div>
+<label for="category">Categoría</label><select id="category"><option>Salario</option><option>Propina</option><option>Venta/extra</option><option>Comida</option><option>Transporte</option><option>Vivienda/servicios</option><option>Salud</option><option>Educación</option><option>Compras</option><option>Otro</option></select>
+<button class="primary" type="submit">Guardar movimiento</button></form></div>
+<div class="card"><h2>Historial</h2><div id="transactionList" class="empty">Aquí aparecerán tus ingresos y gastos.</div></div>
+</div></section>
+<section id="deudas" class="page">
+<div class="two">
+<div class="card"><h2>Agregar una deuda</h2><form id="debtForm">
+<label for="creditor">Nombre de la deuda o acreedor</label><input id="creditor" required maxlength="80" placeholder="Ej. tarjeta, préstamo">
+<div class="row"><div><label for="debtAmount">Monto total (RD$)</label><input id="debtAmount" type="number" min="0.01" step="0.01" required placeholder="0.00"></div><div><label for="minimum">Cuota mínima (RD$)</label><input id="minimum" type="number" min="0" step="0.01" value="0"></div></div>
+<label for="dueDate">Próxima fecha de pago (opcional)</label><input id="dueDate" type="date">
+<button class="primary" type="submit">Guardar deuda</button></form></div>
+<div class="card"><h2>Registrar pago de deuda</h2><form id="paymentForm">
+<label for="debtSelect">Selecciona la deuda</label><select id="debtSelect" required><option value="">Primero agrega una deuda</option></select>
+<label for="paymentAmount">Monto pagado (RD$)</label><input id="paymentAmount" type="number" min="0.01" step="0.01" required placeholder="0.00">
+<label for="paymentDate">Fecha del pago</label><input id="paymentDate" type="date" required>
+<label for="paymentNote">Nota (opcional)</label><input id="paymentNote" maxlength="80" placeholder="Ej. pago de quincena">
+<button class="primary" type="submit">Registrar pago</button></form><p class="note">El pago se resta de la deuda pendiente y también se registra como gasto, para que tu balance sea más realista.</p></div>
+</div>
+<div class="card"><h2>Lista de deudas</h2><div id="debtList" class="empty">Todavía no has agregado deudas.</div></div>
+</section>
+<section id="consejos" class="page">
+<div class="card"><h2>Consejos para avanzar</h2><div id="tipsList"></div><button class="primary" id="newTip" type="button">Dame otro consejo</button></div>
+<div class="card"><h3>Mi compromiso de hoy</h3><p>Una decisión pequeña puede acercarte a tu libertad financiera.</p><label for="commitment">Escribe tu meta para hoy</label><textarea id="commitment" placeholder="Ej. no comprar por impulso y guardar RD$ 200"></textarea><button class="primary" id="saveCommitment" type="button">Guardar mi compromiso</button><p class="note" id="commitmentStatus"></p></div>
+</section>
+<footer>Los datos se guardan en este navegador de tu dispositivo. No borres los datos de Safari si quieres conservarlos. Haz una copia de seguridad periódicamente.</footer>
+</main>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',maximumFractionDigits:2}).format(Number(n)||0);
+const today=()=>new Date().toLocaleDateString('en-CA');
+const tips=[
+'Anota cada gasto, incluso los pequeños. Lo que mides, lo puedes mejorar.',
+'Paga al menos la cuota mínima de todas tus deudas y evita cargos por atraso.',
+'Cuando puedas, dirige el dinero extra a una deuda prioritaria sin descuidar tus necesidades básicas.',
+'Antes de comprar algo que no necesitas, espera 24 horas y revisa tu presupuesto.',
+'Separa una pequeña cantidad para emergencias, aunque al principio sea poco.',
+'No tomes un préstamo nuevo para pagar otro sin comparar el costo total y las condiciones.',
+'Celebra cada avance: reducir una deuda, cumplir un presupuesto o evitar una compra impulsiva cuenta.',
+'Si tus pagos superan tus ingresos, contacta a tus acreedores para preguntar por opciones de pago realistas.',
+'Planifica la comida y el transporte de la semana para reducir gastos inesperados.',
+'Tu situación financiera puede mejorar con constancia. No te compares: enfócate en tu próximo paso.'
+];
+let data={transactions:[],debts:[],payments:[],commitment:''};
+try{const saved=localStorage.getItem('miLibertadFinanciera_v1');if(saved){const parsed=JSON.parse(saved);data={...data,...parsed}}}catch(e){}
+function save(){try{localStorage.setItem('miLibertadFinanciera_v1',JSON.stringify(data));return true}catch(e){alert('No se pudo guardar. Revisa el espacio disponible y los ajustes de Safari.');return false}}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function remaining(d){return Math.max(0,Number(d.amount)-data.payments.filter(p=>p.debtId===d.id).reduce((s,p)=>s+Number(p.amount),0))}
+function totals(){let inc=data.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount),0);let exp=data.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount),0);return {inc,exp,balance:inc-exp}}
+function render(){
+const t=totals(),original=data.debts.reduce((s,d)=>s+Number(d.amount),0),left=data.debts.reduce((s,d)=>s+remaining(d),0),paid=original-left;
+$('balance').textContent=money(t.balance);$('totalDebt').textContent=money(left);$('totalIncome').textContent=money(t.inc);$('totalExpenses').textContent=money(t.exp);
+$('progressText').textContent=original?Math.round(paid/original*100)+'% de tus deudas originales pagadas.':'Registra tus deudas para comenzar.';
+$('progressBar').style.width=(original?Math.min(100,paid/original*100):0)+'%';$('paidText').textContent=original?'Pagado: '+money(paid)+' · Pendiente: '+money(left):'';
+const tx=[...data.transactions].sort((a,b)=>b.date.localeCompare(a.date));
+const txHtml=arr=>arr.length?arr.map(x=>`<div class="item"><div><strong>${escapeHTML(x.description)}</strong><div class="sub">${escapeHTML(x.category||'Pago de deuda')} · ${escapeHTML(x.date)}</div></div><div style="text-align:right"><div class="amount ${x.type==='income'?'green':'red'}">${x.type==='income'?'+':'−'}${money(x.amount)}</div><button class="small" data-del-tx="${x.id}">Eliminar</button></div></div>`).join(''):'<div class="empty">Todavía no hay movimientos.</div>';
+$('transactionList').innerHTML=txHtml(tx);$('recentList').innerHTML=tx.length?tx.slice(0,4).map(x=>`<div class="item"><div><strong>${escapeHTML(x.description)}</strong><div class="sub">${escapeHTML(x.date)}</div></div><div class="amount ${x.type==='income'?'green':'red'}">${x.type==='income'?'+':'−'}${money(x.amount)}</div></div>`).join(''):'Todavía no hay movimientos.';
+$('debtList').innerHTML=data.debts.length?data.debts.map(d=>{const r=remaining(d);return `<div class="item"><div style="flex:1"><strong>${escapeHTML(d.name)}</strong><div class="sub">Monto inicial: ${money(d.amount)} · Cuota mínima: ${money(d.minimum||0)}${d.dueDate?' · Próximo pago: '+escapeHTML(d.dueDate):''}</div><div class="bar"><span style="width:${Math.min(100,(Number(d.amount)-r)/Number(d.amount)*100)}%"></span></div><div class="sub">Pendiente: <b>${money(r)}</b> · Pagado: ${money(Number(d.amount)-r)}</div></div><button class="danger" data-del-debt="${d.id}">Eliminar</button></div>`}).join(''):'Todavía no has agregado deudas.';
+$('debtSelect').innerHTML='<option value="">Selecciona una deuda</option>'+data.debts.filter(d=>remaining(d)>0).map(d=>`<option value="${d.id}">${escapeHTML(d.name)} — ${money(remaining(d))}</option>`).join('');
+document.querySelectorAll('[data-del-tx]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar este movimiento?')){data.transactions=data.transactions.filter(t=>t.id!==b.dataset.delTx);save();render()}});
+document.querySelectorAll('[data-del-debt]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar esta deuda y sus pagos?')){const id=b.dataset.delDebt;data.debts=data.debts.filter(d=>d.id!==id);data.payments=data.payments.filter(p=>p.debtId!==id);data.transactions=data.transactions.filter(t=>t.paymentId!==id);save();render()}});
+}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===b.dataset.page))}));
+$('date').value=today();$('paymentDate').value=today();
+$('transactionForm').addEventListener('submit',e=>{e.preventDefault();const amount=Number($('amount').value);if(!Number.isFinite(amount)||amount<=0)return alert('Escribe un monto válido.');data.transactions.push({id:id(),type:$('type').value,description:$('description').value.trim(),amount,date:$('date').value||today(),category:$('category').value});if(save()){e.target.reset();$('date').value=today();render();alert('Movimiento guardado.')}})
+$('debtForm').addEventListener('submit',e=>{e.preventDefault();const amount=Number($('debtAmount').value),minimum=Number($('minimum').value)||0;if(!Number.isFinite(amount)||amount<=0)return alert('Escribe un monto válido.');data.debts.push({id:id(),name:$('creditor').value.trim(),amount,minimum,dueDate:$('dueDate').value});if(save()){e.target.reset();$('minimum').value='0';render();alert('Deuda guardada.')}})
+$('paymentForm').addEventListener('submit',e=>{e.preventDefault();const d=data.debts.find(x=>x.id===$('debtSelect').value),amount=Number($('paymentAmount').value);if(!d)return alert('Selecciona una deuda.');if(!Number.isFinite(amount)||amount<=0)return alert('Escribe un monto válido.');if(amount>remaining(d)+0.0001)return alert('El pago supera el saldo pendiente ('+money(remaining(d))+').');const pid=id(),date=$('paymentDate').value||today();data.payments.push({id:pid,debtId:d.id,amount,date,note:$('paymentNote').value});data.transactions.push({id:id(),type:'expense',description:'Pago de deuda: '+d.name,amount,date,category:'Pago de deuda',paymentId:d.id});if(save()){e.target.reset();$('paymentDate').value=today();render();alert('Pago registrado. ¡Buen avance!')}})
+function showTip(){const n=Math.floor(Math.random()*tips.length);$('dailyTip').textContent=tips[n];$('tipsList').innerHTML='<div class="tip"><strong>💡 Consejo</strong>'+tips[n]+'</div><div style="height:10px"></div>'+tips.filter((_,i)=>i!==n).slice(0,4).map(t=>'<div class="item"><div>'+escapeHTML(t)+'</div></div>').join('')}
+$('newTip').onclick=showTip;$('saveCommitment').onclick=()=>{data.commitment=$('commitment').value.trim();if(save())$('commitmentStatus').textContent='Tu compromiso quedó guardado en este dispositivo.'};
+$('commitment').value=data.commitment||'';showTip();render();
+})();
+</script>
+</body></html><!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
